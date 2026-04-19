@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useArmyStore } from '~/stores/army'
+import { useDataStore } from '~/stores/data'
 
 const store = useArmyStore()
+const dataStore = useDataStore()
 const isCreatingRoster = ref(false)
 const newRosterName = ref('')
 
@@ -12,6 +14,8 @@ const newUnit = ref({
   points: 0,
   description: ''
 })
+
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const handleCreateRoster = () => {
   if (newRosterName.value) {
@@ -28,6 +32,22 @@ const handleAddUnit = () => {
     isAddingUnit.value = false
   }
 }
+
+const triggerImport = () => {
+  fileInput.value?.click()
+}
+
+const handleImport = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    try {
+      await dataStore.importData(target.files[0])
+      alert('Backup restored successfully!')
+    } catch (err) {
+      alert('Error: Failed to restore backup. Make sure the file is valid.')
+    }
+  }
+}
 </script>
 
 <template>
@@ -35,6 +55,23 @@ const handleAddUnit = () => {
     <div class="header">
       <h1>Army Builder</h1>
       <button v-if="!store.currentRosterId" @click="isCreatingRoster = true">New Roster</button>
+    </div>
+
+    <!-- Backup & Restore Controls -->
+    <div class="card backup-card">
+      <h3>Data Backup & Restore</h3>
+      <p class="help-text">Export your rosters, rules, and game state to a file for backup or to move them to another device.</p>
+      <div class="backup-actions">
+        <button @click="dataStore.exportData" class="backup-btn">Export Data (Save to File)</button>
+        <button @click="triggerImport" class="restore-btn">Import Data (Restore from File)</button>
+        <input 
+          ref="fileInput" 
+          type="file" 
+          accept=".json" 
+          style="display: none" 
+          @change="handleImport" 
+        />
+      </div>
     </div>
 
     <!-- Roster Selection -->
@@ -111,6 +148,33 @@ const handleAddUnit = () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+}
+
+.backup-card {
+  margin-bottom: 2rem;
+  border: 1px dashed var(--secondary-color);
+}
+
+.help-text {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.backup-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.backup-btn {
+  background-color: var(--secondary-color);
+}
+
+.restore-btn {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 
 .roster-selector {

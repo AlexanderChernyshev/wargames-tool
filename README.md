@@ -12,6 +12,7 @@ A comprehensive, offline-ready companion tool for tabletop wargaming. Designed t
 - **Advanced Dice Roller:** Roll single or batch dice (up to 100 at once) for any standard die type (D4–D100). Includes roll history and automatic sum calculation.
 - **Rules Reference:** A searchable digital notebook to store your most-used rules or complex edge cases.
 - **Adaptive Themes:** High-contrast Gold & Slate Blue theme available in both **Dark** and **Light** modes.
+- **Data Backup & Restore:** Export all your rosters, rules, and game states to a single JSON file. This allows you to create backups or manually transfer your data to another device.
 
 ## 📖 How to Use
 
@@ -20,6 +21,7 @@ A comprehensive, offline-ready companion tool for tabletop wargaming. Designed t
 3.  **Track the Game:** On the **Tracker** tab, add the number of players and enter their names. Use the "+" and "-" buttons to manage scores and turns.
 4.  **Quick Lookups:** While on the Tracker, click the **"REF"** tab on the far left to slide out your roster or rules for a quick check mid-turn.
 5.  **Roll Dice:** Enter the number of dice needed in the right sidebar and click the die type to see your results and their total sum instantly.
+6.  **Backup Your Data:** In the **Builder** tab, use the **Export Data** button to save your setup. You can use the **Import Data** button on a different computer or browser to restore everything exactly as you left it.
 
 > **Note:** Currently, game rules and units in your rosters do not automatically affect the tools (such as dice rolls or scores) and are intended for reference only.
 
