@@ -71,9 +71,18 @@ const handleAddUnit = () => {
       <!-- Add Unit Form -->
       <div v-if="isAddingUnit" class="card add-unit-card">
         <h3>Add Unit</h3>
-        <input v-model="newUnit.name" placeholder="Unit Name" />
-        <input v-model.number="newUnit.points" type="number" placeholder="Points" />
-        <textarea v-model="newUnit.description" placeholder="Notes/Wargear..."></textarea>
+        <div class="form-group">
+          <label>Unit Name</label>
+          <input v-model="newUnit.name" placeholder="e.g. Tactical Squad" />
+        </div>
+        <div class="form-group">
+          <label>Points</label>
+          <input v-model.number="newUnit.points" type="number" placeholder="0" />
+        </div>
+        <div class="form-group">
+          <label>Notes / Wargear</label>
+          <textarea v-model="newUnit.description" placeholder="Notes, equipment, special rules..."></textarea>
+        </div>
         <button @click="handleAddUnit">Add to Roster</button>
       </div>
 

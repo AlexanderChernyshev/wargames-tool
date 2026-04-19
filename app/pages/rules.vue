@@ -39,8 +39,14 @@ const handleAddRule = () => {
     <!-- Add Rule Form -->
     <div v-if="isAdding" class="card">
       <h3>New Rule</h3>
-      <input v-model="newRuleTitle" placeholder="Rule Title (e.g. Poisoned Weapon)" />
-      <textarea v-model="newRuleContent" placeholder="Description..."></textarea>
+      <div class="form-group">
+        <label>Rule Title</label>
+        <input v-model="newRuleTitle" placeholder="e.g. Poisoned Weapon" />
+      </div>
+      <div class="form-group">
+        <label>Description / Rules Text</label>
+        <textarea v-model="newRuleContent" placeholder="Enter rule details..."></textarea>
+      </div>
       <button @click="handleAddRule" class="save-btn">Save Rule</button>
     </div>
 

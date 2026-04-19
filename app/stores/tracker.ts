@@ -1,18 +1,19 @@
 import { defineStore } from 'pinia'
 
+export interface Player {
+  id: string
+  name: string
+  vp: number
+  cp: number
+}
+
 export const useTrackerStore = defineStore('tracker', {
   state: () => ({
     turn: 1,
-    player1: {
-      name: 'Player 1',
-      vp: 0,
-      cp: 0
-    },
-    player2: {
-      name: 'Player 2',
-      vp: 0,
-      cp: 0
-    }
+    players: [
+      { id: '1', name: 'Player 1', vp: 0, cp: 0 },
+      { id: '2', name: 'Player 2', vp: 0, cp: 0 }
+    ] as Player[]
   }),
   actions: {
     incrementTurn() {
@@ -21,26 +22,38 @@ export const useTrackerStore = defineStore('tracker', {
     decrementTurn() {
       if (this.turn > 1) this.turn--
     },
-    updateVP(player: 1 | 2, amount: number) {
-      if (player === 1) {
-        this.player1.vp = Math.max(0, this.player1.vp + amount)
-      } else {
-        this.player2.vp = Math.max(0, this.player2.vp + amount)
+    addPlayer() {
+      const id = Date.now().toString()
+      this.players.push({
+        id,
+        name: `Player ${this.players.length + 1}`,
+        vp: 0,
+        cp: 0
+      })
+    },
+    removePlayer(id: string) {
+      if (this.players.length > 1) {
+        this.players = this.players.filter(p => p.id !== id)
       }
     },
-    updateCP(player: 1 | 2, amount: number) {
-      if (player === 1) {
-        this.player1.cp = Math.max(0, this.player1.cp + amount)
-      } else {
-        this.player2.cp = Math.max(0, this.player2.cp + amount)
+    updateVP(playerId: string, amount: number) {
+      const player = this.players.find(p => p.id === playerId)
+      if (player) {
+        player.vp = Math.max(0, player.vp + amount)
+      }
+    },
+    updateCP(playerId: string, amount: number) {
+      const player = this.players.find(p => p.id === playerId)
+      if (player) {
+        player.cp = Math.max(0, player.cp + amount)
       }
     },
     reset() {
       this.turn = 1
-      this.player1.vp = 0
-      this.player1.cp = 0
-      this.player2.vp = 0
-      this.player2.cp = 0
+      this.players.forEach(p => {
+        p.vp = 0
+        p.cp = 0
+      })
     }
   },
   persist: true

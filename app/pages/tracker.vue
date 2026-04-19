@@ -116,7 +116,7 @@ const clearHistory = () => {
 
     <div class="header">
       <h1>Game Tracker</h1>
-      <button @click="handleReset" class="reset-btn">Reset Score</button>
+      <button @click="handleReset" class="reset-btn">Reset Scores</button>
     </div>
 
     <div class="tracker-layout">
@@ -133,45 +133,41 @@ const clearHistory = () => {
 
         <!-- Players Grid -->
         <div class="players-grid">
-          <div class="card player-card">
-            <input v-model="trackerStore.player1.name" class="player-name-input" />
+          <div v-for="player in trackerStore.players" :key="player.id" class="card player-card">
+            <div class="player-header">
+              <input v-model="player.name" class="player-name-input" />
+              <button 
+                v-if="trackerStore.players.length > 1" 
+                @click="trackerStore.removePlayer(player.id)" 
+                class="remove-player-btn"
+                title="Remove Player"
+              >&times;</button>
+            </div>
+            
             <div class="stat-section">
               <div class="label">VP</div>
               <div class="counter-row small">
-                <button @click="trackerStore.updateVP(1, -1)">-</button>
-                <div class="count">{{ trackerStore.player1.vp }}</div>
-                <button @click="trackerStore.updateVP(1, 1)">+</button>
+                <button @click="trackerStore.updateVP(player.id, -1)">-</button>
+                <div class="count">{{ player.vp }}</div>
+                <button @click="trackerStore.updateVP(player.id, 1)">+</button>
               </div>
             </div>
+
             <div class="stat-section">
               <div class="label">CP</div>
               <div class="counter-row small">
-                <button @click="trackerStore.updateCP(1, -1)">-</button>
-                <div class="count">{{ trackerStore.player1.cp }}</div>
-                <button @click="trackerStore.updateCP(1, 1)">+</button>
+                <button @click="trackerStore.updateCP(player.id, -1)">-</button>
+                <div class="count">{{ player.cp }}</div>
+                <button @click="trackerStore.updateCP(player.id, 1)">+</button>
               </div>
             </div>
           </div>
 
-          <div class="card player-card">
-            <input v-model="trackerStore.player2.name" class="player-name-input" />
-            <div class="stat-section">
-              <div class="label">VP</div>
-              <div class="counter-row small">
-                <button @click="trackerStore.updateVP(2, -1)">-</button>
-                <div class="count">{{ trackerStore.player2.vp }}</div>
-                <button @click="trackerStore.updateVP(2, 1)">+</button>
-              </div>
-            </div>
-            <div class="stat-section">
-              <div class="label">CP</div>
-              <div class="counter-row small">
-                <button @click="trackerStore.updateCP(2, -1)">-</button>
-                <div class="count">{{ trackerStore.player2.cp }}</div>
-                <button @click="trackerStore.updateCP(2, 1)">+</button>
-              </div>
-            </div>
-          </div>
+          <!-- Add Player Card -->
+          <button @click="trackerStore.addPlayer" class="card add-player-card">
+            <span class="plus-icon">+</span>
+            <span>Add Player</span>
+          </button>
         </div>
       </div>
 
@@ -179,7 +175,7 @@ const clearHistory = () => {
         <div class="card dice-card">
           <div class="label">DICE ROLLER</div>
           <div class="dice-count-control">
-            <span>Dice:</span>
+            <span># of dice to roll:</span>
             <input v-model.number="diceCount" type="number" min="1" max="100" class="count-input" />
           </div>
           <div class="dice-grid">
@@ -211,7 +207,7 @@ const clearHistory = () => {
 
 <style scoped>
 .tracker-page {
-  max-width: 1000px;
+  max-width: 1200px; /* Increased to fit 3 columns better */
   margin: 0 auto;
   position: relative;
 }
@@ -231,7 +227,7 @@ const clearHistory = () => {
 /* Floating Drawer Styles */
 .ref-drawer {
   position: fixed;
-  left: -320px; /* Hidden by default */
+  left: -320px;
   top: 80px;
   bottom: 20px;
   width: 320px;
@@ -406,23 +402,70 @@ const clearHistory = () => {
 
 .players-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+}
+
+.player-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
 .player-name-input {
   background: transparent;
   border: none;
   border-bottom: 1px solid var(--border-color);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: bold;
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
   color: var(--primary-color);
+  width: 80%;
+}
+
+.remove-player-btn {
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  background: transparent;
+  color: var(--error-color);
+  border: none;
+  font-size: 1.2rem;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
 }
 
 .stat-section {
   margin-bottom: 1.5rem;
+}
+
+.add-player-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 2px dashed var(--border-color);
+  background: transparent;
+  color: var(--text-color);
+  opacity: 0.6;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.add-player-card:hover {
+  opacity: 1;
+  border-color: var(--secondary-color);
+  color: var(--secondary-color);
+}
+
+.plus-icon {
+  font-size: 2rem;
+  line-height: 1;
 }
 
 /* Dice Styles */
@@ -519,6 +562,12 @@ const clearHistory = () => {
   text-align: center;
 }
 
+@media (max-width: 1100px) {
+  .players-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 900px) {
   .tracker-layout {
     grid-template-columns: 1fr;
@@ -537,14 +586,9 @@ const clearHistory = () => {
   }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
   .players-grid {
     grid-template-columns: 1fr;
-  }
-  
-  .ref-drawer {
-    width: 280px;
-    left: -280px;
   }
 }
 </style>
